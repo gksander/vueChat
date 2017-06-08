@@ -3,8 +3,8 @@
 		
 		<div id="messagesContainer" ref="messagesContainer">
 			<div v-for="msg in messages" class="messageContainer">
-				<div class="messageHeader">
-					<span :style="{color: getColor(msg.username), 'font-weight': 'bold'}">{{msg.username == username ? 'Me' : msg.username}}</span>
+				<div class="messageHeader" :style="{'background-color': getColor(msg.username), 'font-weight': 'bold', color:'white'}">
+					<span>{{msg.username == username ? 'Me' : msg.username}}</span>
 				</div>
 				<div class="messageBody" v-html="MDtoHTML(msg.msg)"></div>
 			</div>
@@ -43,11 +43,15 @@
 
 				</div>
 
-				<i 
+				<!-- <i 
 					class="fa fa-paper-plane" aria-hidden="true"
 					style="float:right"
 					@click="sendMessage()"
-				></i>
+				></i> -->
+				<button id="sendButton" @click="sendMessage()">
+					Send
+					<i class="fa fa-paper-plane" aria-hidden="true"></i>
+				</button>
 			</div>
 
 			<div id="inputContainer">
@@ -223,10 +227,12 @@
 		// Fixed users list on right-hand side of screen
 		position: fixed
 		top: $pad
-		bottom: $inputHeight + $pad
+		// bottom: $inputHeight + $pad
 		right: 0
 		width: $usersWidth
 		transition: all 300ms
+		max-height: 70vh
+		overflow-y: auto
 
 		background: white
 		box-shadow: 0px 0px 5px black
@@ -317,6 +323,20 @@
 				border-top-right-radius: 5px
 				border-top-left-radius: 5px
 
+			#sendButton
+				cursor: pointer
+				border: none
+				margin: 0px 8px
+				border-top-right-radius: 5px
+				border-top-left-radius: 5px
+				// font-size: 20px
+				background-color: #3346D7
+				color: white
+				i
+					font-size: inherit
+					color: white
+					margin: 0px 3px
+
 		#inputContainer
 			// position: absolute
 			height: $inputHeight - 30px
@@ -345,6 +365,7 @@
 		margin: 10px
 		border: 1px solid gray
 		border-radius: 2px
+		background: white
 
 		.messageHeader
 			padding: 3px
@@ -359,6 +380,13 @@
 
 	// HANDLE SMALL SCREENS
 	@media screen and (max-width: $breakpoint)
+		#messagesContainer
+			left: 0
+			right: 0px !important
+			top: 0
+			background: transparent
+			box-shadow: none
+
 		#usersContainer
 			right: -$usersWidth
 			&:not(.shown)
@@ -366,10 +394,10 @@
 			&.shown
 				right: 0
 				h1
-					animation-name: userBlink
-					animation-duration: 2s
-					animation-iteration-count: infinite
-					animation-direction: alternate
+					// animation-name: userBlink
+					// animation-duration: 2s
+					// animation-iteration-count: infinite
+					// animation-direction: alternate
 					@keyframes userBlink
 						0%
 							background-color: white
