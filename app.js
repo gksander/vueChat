@@ -3,9 +3,10 @@ var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var path = require('path');
+var fs = require('fs');
 
 
-app.use(express.static('dist'));
+app.use('/static', express.static('dist/static'));
 
 app.get('/', function(req, res) {
 	res.sendFile(path.join(__dirname, '/dist/index.html'))
@@ -103,7 +104,7 @@ io.on('connection', function(socket) {
 
 
 
-const port = process.env.PORT || 80;
+const port = process.env.PORT || 8080;
 http.listen(port, function(){
 	console.log(`listening on *: ${port}`)
 });

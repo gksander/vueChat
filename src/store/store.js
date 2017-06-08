@@ -71,7 +71,10 @@ export const store = new Vuex.Store({
 
 // HANDLE SOCKETS
 import io from 'socket.io-client';
-var socket = io('http://localhost:80');
+var HOST = location.origin.replace('8006', '8080');
+// console.log(location.origin);
+// var socket = io('http://localhost:8080');
+var socket = io(HOST)
 
 // When users object is changed
 socket.on('usersChanged', function(users) {
