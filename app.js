@@ -3,6 +3,8 @@ var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
 var users = {};
+var messages = [];
+var NumMessagesToKeep = 30;
 
 io.on('connection', function(socket) {
 	// Keep track as to whether the user has been added
@@ -48,10 +50,21 @@ io.on('connection', function(socket) {
 	socket.on('chat message', function(msg) {
 		if (!addedUser) return;
 
-		socket.broadcast.emit('chat message', {
+		var msgo = {
 			msg: msg,
 			username: socket.username
-		});
+		};
+
+		socket.broadcast.emit('chat message', msgo);
+		messages.push(msgo);
+		// We only keep N messages in memory
+		messages = messages.slice(messages.length - NumMessagesToKeep, messages.length);
+	});
+
+	// Request for messages
+	socket.on('fetchMessages', function(){
+		socket.emit('fetchMessages', messages);
+		return;
 	});
 
 	// Color changed

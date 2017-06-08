@@ -24,6 +24,10 @@ export const store = new Vuex.Store({
 
 		addMessage(state, msg) {
 			state.messages.push(msg);
+		},
+
+		fetchMessages(state, msgs) {
+			state.messages = msgs;
 		}
 
 	},
@@ -53,6 +57,11 @@ export const store = new Vuex.Store({
 				username: state.username,
 				color: color
 			});
+		},
+
+		fetchMessages({commit, state}) {
+			console.log('action called');
+			socket.emit('fetchMessages');
 		}
 
 	}
@@ -71,4 +80,8 @@ socket.on('usersChanged', function(users) {
 
 socket.on('chat message', function(msg) {
 	store.commit('addMessage', msg);
+});
+
+socket.on('fetchMessages', function(msgs) {
+	store.commit('fetchMessages', msgs);
 });

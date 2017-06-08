@@ -4,7 +4,7 @@
 		<div id="messagesContainer" ref="messagesContainer">
 			<div v-for="msg in messages" class="messageContainer">
 				<div class="messageHeader">
-					<span :style="{color: getColor(msg.username), 'font-weight': 'bold'}">{{msg.username}}</span>
+					<span :style="{color: getColor(msg.username), 'font-weight': 'bold'}">{{msg.username == username ? 'Me' : msg.username}}</span>
 				</div>
 				<div class="messageBody" v-html="MDtoHTML(msg.msg)"></div>
 			</div>
@@ -35,6 +35,12 @@
 						:class="{active: showUsers}"
 						@click="showUsers = !showUsers"
 					></i>
+
+					<!-- <i 
+						class="fa fa-refresh" aria-hidden="true"
+						@click="fetchMessages()"
+					></i> -->
+
 				</div>
 
 				<i 
@@ -106,6 +112,10 @@
 				// return this.$refs.messagescontainer.scrollTop;
 				return 300;
 				// return this.$refs.messagesContainer.scrollTop;
+			},
+
+			username() {
+				return this.$store.state.username;
 			}
 		},
 
@@ -119,6 +129,10 @@
 					cont.scrollTop = cont.scrollHeight;
 				}, 1)
 			}
+		},
+
+		created() {
+ 			this.$store.dispatch('fetchMessages');
 		},
 
 
@@ -145,6 +159,11 @@
 			scrollToEnd() {
 				var container = this.$el.querySelector("#messagesContainer");
 		      	container.scrollTop = container.scrollHeight;
+			},
+
+			fetchMessages(){
+				console.log('component method called');
+				this.$store.dispatch('fetchMessages');
 			},
 
 			MDtoHTML(md) {
