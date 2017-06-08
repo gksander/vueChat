@@ -103,7 +103,7 @@ io.on('connection', function(socket) {
 
 
 
-const port = process.env.PORT || 8080;
+const port = process.env.PORT || 80;
 http.listen(port, function(){
 	console.log(`listening on *: ${port}`)
 });
