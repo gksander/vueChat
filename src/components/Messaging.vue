@@ -1,59 +1,64 @@
 <template>
 	<div id="chat" class="row center-xs top-xs">
 		
-		<div class="col-xs-12 col-sm-8" id="messaging">
-			<div id="messagesContainer">
-				<div v-for="msg in messages" class="messageContainer">
-					<div class="messageHeader">
-						<span :style="{color: getColor(msg.username), 'font-weight': 'bold'}">{{msg.username}}</span>
-					</div>
-					<div class="messageBody" v-html="MDtoHTML(msg.msg)"></div>
+		<div id="messagesContainer" ref="messagesContainer">
+			<div v-for="msg in messages" class="messageContainer">
+				<div class="messageHeader">
+					<span :style="{color: getColor(msg.username), 'font-weight': 'bold'}">{{msg.username}}</span>
 				</div>
+				<div class="messageBody" v-html="MDtoHTML(msg.msg)"></div>
 			</div>
+		</div>
+			
 
-			<div id="editorContainer">
-				<div id="optionsContainer">
-					<div id="leftOptions">
-							<i 
-							class="fa fa-pencil-square-o" aria-hidden="true"
-							:class="{active: mode=='type'}"
-							@click="mode='type'"
-						></i>
+		<div id="editorContainer">
+			<div id="optionsContainer">
+				<div id="leftOptions">
 						<i 
-							class="fa fa-eye" aria-hidden="true"
-							:class="{active: mode=='preview'}"
-							@click="mode='preview'"
-						></i>
-						<input type="hidden" id="color_value" :value="color" @change="changeColor($event.target.value)">
-						<button class="jscolor {valueElement: 'color_value'}" id="colorButton">
-							Color
-						</button>
-					</div>
+						class="fa fa-pencil-square-o" aria-hidden="true"
+						:class="{active: mode=='type'}"
+						@click="mode='type'"
+					></i>
+					<i 
+						class="fa fa-eye" aria-hidden="true"
+						:class="{active: mode=='preview'}"
+						@click="mode='preview'"
+					></i>
+					<input type="hidden" id="color_value" :value="color" @change="changeColor($event.target.value)">
+					<button class="jscolor {valueElement: 'color_value'}" id="colorButton">
+						Color
+					</button>
 
 					<i 
-						class="fa fa-paper-plane" aria-hidden="true"
-						style="float:right"
-						@click="sendMessage()"
+						class="fa fa-users" aria-hidden="true"
+						id="toggleUsers"
+						:class="{active: showUsers}"
+						@click="showUsers = !showUsers"
 					></i>
 				</div>
 
-				<div id="inputContainer">
-					
-					<div v-if="mode=='type'">
-						<textarea name="newMsg" id="newMsg" v-model="newMsg" rows="5" @keyup.enter.ctrl="sendMessage()"></textarea>
-					</div>
-
-					<div v-if="mode == 'preview'" v-html="MDtoHTML(newMsg)" id="preview">
-						
-					</div>
-
-				</div>
+				<i 
+					class="fa fa-paper-plane" aria-hidden="true"
+					style="float:right"
+					@click="sendMessage()"
+				></i>
 			</div>
 
+			<div id="inputContainer">
+				
+				<div v-if="mode=='type'">
+					<textarea name="newMsg" id="newMsg" v-model="newMsg" @keyup.enter.ctrl="sendMessage()"></textarea>
+				</div>
+
+				<div v-if="mode == 'preview'" v-html="MDtoHTML(newMsg)" id="preview">
+					
+				</div>
+
+			</div>
 		</div>
 
-		<div class="col-xs-10 col-sm-offset-1 col-sm-3" id="usersContainer">
-			
+		
+		<div id="usersContainer" :class="{'shown': showUsers}">
 			<h1>Online</h1>
 			<ul id="usersList">
 				<li v-for="(user, name) in users" :style='{color: "#"+user.color}'>
@@ -75,7 +80,8 @@
 		data () {
 			return {
 				mode: 'type',
-				newMsg: ''
+				newMsg: '',
+				showUsers: false
 			}
 		},
 
@@ -93,6 +99,25 @@
 
 			messages(){
 				return this.$store.state.messages;
+			},
+
+			scrollTop() {
+				// console.log(this.$refs.messagescontainer)
+				// return this.$refs.messagescontainer.scrollTop;
+				return 300;
+				// return this.$refs.messagesContainer.scrollTop;
+			}
+		},
+
+		watch: {
+			// When messages change, scroll to bottom
+			messages() {
+				var that = this
+				// For some reason, I have to timeout this.
+				setTimeout(function(){
+					var cont = that.$el.querySelector("#messagesContainer");
+					cont.scrollTop = cont.scrollHeight;
+				}, 1)
 			}
 		},
 
@@ -115,6 +140,11 @@
 				catch (err) {
 					return '#000000';
 				}
+			},
+
+			scrollToEnd() {
+				var container = this.$el.querySelector("#messagesContainer");
+		      	container.scrollTop = container.scrollHeight;
 			},
 
 			MDtoHTML(md) {
@@ -161,12 +191,24 @@
 </script>
 
 <style scoped lang="sass">
+	@import "../assets/scss/variables.sass" 
+
 	#chat
 		// margin: 0px 0px
 		padding: 20px
 		
+	#toggleUsers
+		display: none
 
 	#usersContainer
+		// Fixed users list on right-hand side of screen
+		position: fixed
+		top: $pad
+		bottom: $inputHeight + $pad
+		right: 0
+		width: $usersWidth
+		transition: all 300ms
+
 		background: white
 		box-shadow: 0px 0px 5px black
 		padding: 0px
@@ -199,19 +241,25 @@
 		// padding: 0px
 
 	#messagesContainer
-		padding: 5px
+		position: fixed
+		top: $pad
+		left: $pad
+		right: $usersWidth + $pad
+		bottom: $inputHeight + $pad
 		background: white
-		margin-bottom: 10px
 		box-shadow: 0px 0px 5px black
-		max-height: 70vh
 		overflow-y: auto
 
+
 	#editorContainer
-		text-align: left
-		padding: 5px
-		box-shadow: 0px 0px 5px black
-		background-color: white
-		margin-bottom: 15px
+		position: fixed
+		bottom: 0
+		// height: $inputHeight
+		left: 0
+		right: 0
+		// display: flex
+		// flex-direction: column
+
 
 		#optionsContainer
 			display: flex
@@ -223,12 +271,25 @@
 
 			i
 				margin: 0px 8px
-				color: blue
+				color: black
 				font-size: 24px
 				cursor: pointer
 				&.active
-					font-weight: bold
-					font-size: 28px
+					color: blue
+					&:not(.fa-users)
+						font-weight: bold
+
+				&.fa-users.active
+					animation-name: blinkUsersIcon
+					animation-duration: 2s
+					animation-iteration-count: infinite
+					animation-direction: alternate
+
+					@keyframes blinkUsersIcon
+						0%
+							color: black
+						100%
+							color: blue
 
 			#colorButton
 				cursor: pointer
@@ -237,14 +298,25 @@
 				border-top-right-radius: 5px
 				border-top-left-radius: 5px
 
+		#inputContainer
+			// position: absolute
+			height: $inputHeight - 30px
+			bottom: 0
+			background: white
+			// display: flex
+			// flex-direction: column
+
 		#newMsg
 			box-sizing: border-box
 			width: 100%
+			height: $inputHeight - 30px
 			resize: none
+			// flex-basis: 100%
+			// flex-shrink: 1
 
 		#preview
 			// box-shadow: 0px 0px 3px black
-			// padding: 0px 5px
+			padding: 0px 5px
 			max-height: 200px
 			overflow-y: auto
 
@@ -264,5 +336,33 @@
 			margin: 0px
 			padding: 0px 5px
 
+
+
+	// HANDLE SMALL SCREENS
+	@media screen and (max-width: $breakpoint)
+		#usersContainer
+			right: -$usersWidth
+			&:not(.shown)
+				box-shadow: none
+			&.shown
+				right: 0
+				h1
+					animation-name: userBlink
+					animation-duration: 2s
+					animation-iteration-count: infinite
+					animation-direction: alternate
+					@keyframes userBlink
+						0%
+							background-color: white
+							color: black
+						100%
+							background-color: blue
+							color: white
+
+		#toggleUsers
+			display: inline
+
+		#messagesContainer
+			right: $pad
 
 </style>

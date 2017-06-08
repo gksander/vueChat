@@ -26,12 +26,12 @@ export default {
 </script>
 
 <style lang="sass">
-    @import "../node_modules/flexboxgrid/dist/flexboxgrid.min.css"
     @import "../node_modules/font-awesome/css/font-awesome.css"
     @import "../node_modules/katex/dist/katex.css"
     body 
         margin: 0
-        background: lightblue
+        background-color: lightgray
+        background: linear-gradient(45deg, gray, lightgray)
         font-size: 18px
 
 </style>

@@ -1,7 +1,7 @@
 <template>
-	<div id="login" class="row center-xs middle-xs around-xs">
+	<div id="login">
 
-		<div class="col-xs-12 col-sm-6">
+		<div>
 			<h1>Choose a Nickname</h1>
 			<p>
 				<input
@@ -12,14 +12,14 @@
 			</p>
 		</div>
 
-		<div class="col-xs-12 col-sm-6">
+		<div>
 			<h1>Choose Your Color:</h1>
 			<p>
 				<input class="jscolor {position:'top'}" :value="color" id="colorPicker" @change="colorChange($event.target.value)">
 			</p>
 		</div>
 
-		<div class="col-xs-12">
+		<div>
 			<i
 				class="fa fa-arrow-circle-o-right" id="goButton"
 				aria-hidden="true"
@@ -67,6 +67,7 @@
 </script>
 
 <style scoped lang="sass">
+
 	$blinkTime: 1s
 	#login
 		// Position login block
@@ -79,6 +80,13 @@
 		background: linear-gradient(to top left, gray, black)
 		color: white
 		// font-size: 42px
+		display: flex
+		justify-content: center
+		align-items: center
+		flex-direction: column
+		
+		>div 
+			margin: 20px
 
 		input#username 
 			color: white
