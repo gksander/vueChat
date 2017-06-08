@@ -12,9 +12,7 @@
   "main": "app.js",
   "dependencies": {
     "express": "^4.15.3",
-    "flexboxgrid": "^6.3.1",
     "font-awesome": "^4.7.0",
-    "jscolor": "^0.1.2",
     "katex": "^0.7.1",
     "showdown": "^1.7.1",
     "socket.io": "^2.0.2",
